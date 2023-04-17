@@ -17,6 +17,7 @@ uniform sampler2D heightmap;
 uniform vec3 mat_color;
 uniform vec3 mat_specular;
 uniform float mat_shininess;
+uniform sampler2D image;
 
 // Output
 out vec3 model_color;
@@ -25,9 +26,8 @@ void main() {
     // Get initial position of vertex (prior to height displacement)
     vec4 world_pos = world * vec4(position, 1.0);
 
-
     // Pass vertex color onto the fragment shader
-    //model_color = ;
+    model_color = mat_color * texture(image, uv).rgb;
 
     // Transform and project vertex from 3D world-space to 2D screen-space
     gl_Position = projection * view * world_pos;

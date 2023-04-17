@@ -184,6 +184,8 @@ export default {
                 illum_gauroud: illum_gauroud,
                 illum_phong: illum_phong
             };
+        }, (scene, subdivisions) => {
+            return this.createGroundModel('ground', subdivisions, scene);
         });
 
         /*
