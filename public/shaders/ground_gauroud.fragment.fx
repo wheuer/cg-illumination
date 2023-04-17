@@ -2,14 +2,12 @@
 precision mediump float;
 
 // Input
-in vec4 model_color;
-
-// Uniforms
+in vec3 model_color;
 
 // Output
 out vec4 FragColor;
 
 void main() {
     // Color
-    FragColor = model_color;
+    FragColor = vec4(model_color, 1.0);
 }

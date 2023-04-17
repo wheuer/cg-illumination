@@ -152,8 +152,41 @@ export default {
         const engine = new Engine(gl);
 
         // Create our Renderer
-        const renderer = new Renderer(engine, []);
+        const renderer = new Renderer(canvas, engine, (scene) => {
+            let ground_gauroud = new ShaderMaterial('ground_gauroud', scene, '/shaders/ground_gauroud', {
+                attributes: ['position', 'uv'],
+                uniforms: ['world', 'view', 'projection'],
+                samplers: ['heightmap', 'image']
+            });
+            ground_gauroud.backFaceCulling = false;
+            let ground_phong = new ShaderMaterial('ground_phong', scene, '/shaders/ground_phong', {
+                attributes: ['position', 'uv'],
+                uniforms: ['world', 'view', 'projection'],
+                samplers: ['heightmap', 'image']
+            });
+            ground_phong.backFaceCulling = false;
+            let illum_gauroud = new ShaderMaterial('illum_gauroud', scene, '/shaders/illum_gauroud', {
+                attributes: ['position', 'uv'],
+                uniforms: ['worldViewProjection'],
+                samplers: ['image']
+            });
+            illum_gauroud.backFaceCulling = true;
+            let illum_phong = new ShaderMaterial('illum_phong', scene, '/shaders/illum_phong', {
+                attributes: ['position', 'uv'],
+                uniforms: ['worldViewProjection'],
+                samplers: ['image']
+            });
+            illum_phong.backFaceCulling = true;
 
+            return {
+                ground_gauroud: ground_gauroud,
+                ground_phong: ground_phong,
+                illum_gauroud: illum_gauroud,
+                illum_phong: illum_phong
+            };
+        });
+
+        /*
         // Process scene description
         this.processScene(this.scene_desc);
         console.log(this.scene_data);
@@ -216,7 +249,7 @@ export default {
 
         // Render every frame
         engine.runRenderLoop(() => {
-            this.scene.render();
+            renderer.getActiveScene().render();
         });
     }
 }
