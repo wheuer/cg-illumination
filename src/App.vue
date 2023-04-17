@@ -12,6 +12,8 @@ import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 //import { CreatePlane } from '@babylonjs/core/Meshes/Builders/planeBuilder';
 
+import { Renderer } from './renderer'
+
 export default {
     props: ['scene_desc'],
     data() {
@@ -140,14 +142,17 @@ export default {
         canvas.height = 558;
 
         // Create a WebGL 2 rendering context
-        this.gl = canvas.getContext('webgl2');
-        if (!this.gl) {
+        let gl = canvas.getContext('webgl2');
+        if (!gl) {
             alert('Error: Browser does not support WebGL2 Canvas');
             return;
         }
 
         // Associate a Babylon Render Engine to it.
-        const engine = new Engine(this.gl);
+        const engine = new Engine(gl);
+
+        // Create our Renderer
+        const renderer = new Renderer(engine, []);
 
         // Process scene description
         this.processScene(this.scene_desc);
