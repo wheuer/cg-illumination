@@ -80,6 +80,10 @@ export default {
             return ground;
         },
 
+        changeScene(event) {
+            console.log(event);
+        },
+        
         selectShadingAlgorithm(event) {
             console.log(event);
         }
@@ -127,8 +131,13 @@ export default {
 
 <template>
     <div id="userInterface">
-        <label for="sceneFile">Scene: </label>
-        <input id="sceneFile" type="file" @change="loadNewScene" />
+        <label for="sceneSelect">Scene: </label>
+        <select v-if="renderer === null" id="sceneSelect" @change="changeScene">
+            <option value="scene0">Scene 0</option>
+        </select>
+        <select v-else id="sceneSelect" @change="changeScene">
+            <option v-for="(renderer.scenes.length, i)" :value="'scene' + i">Scene {{i}}</option>
+        </select>
         <label for="shadingAlg">Shading Algorithm: </label>
         <select id="shadingAlg" @change="selectShadingAlgorithm">
             <option value="gouraud">Gouraud</option>
