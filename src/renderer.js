@@ -47,6 +47,7 @@ class Renderer {
         current_scene.camera.setTarget(new Vector3(0.0, 1.8, 0.0));
         current_scene.camera.upVector = new Vector3(0.0, 1.0, 0.0);
         current_scene.camera.attachControl(this.canvas, true);
+        current_scene.camera.fov = 35.0 * (Math.PI / 180);
         current_scene.camera.minZ = 0.1;
         current_scene.camera.maxZ = 100.0;
 
@@ -79,7 +80,7 @@ class Renderer {
             mat_specular: new Color3(0.8, 0.8, 0.8),
             mat_shininess: 16,
         }
-        sphere.material = materials['ground_gouraud'];
+        sphere.material = materials['illum_gouraud'];
 
 
         // Animation function - called before each frame gets rendered

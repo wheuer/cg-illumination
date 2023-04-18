@@ -15,7 +15,7 @@ export default {
     methods: {
         createBasicMaterial(name, shader_path, scene) {
             let basic_mat = new ShaderMaterial(name, scene, shader_path, {
-                attributes: ['position', 'uv'],
+                attributes: ['position', 'normal', 'uv'],
                 uniforms: ['world', 'view', 'projection', 'mat_color', 'mat_specular', 'mat_shininess',
                            'camera_position', 'ambient', 'num_lights', 'light_positions', 'light_colors'],
                 samplers: ['mat_texture']
