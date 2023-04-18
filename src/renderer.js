@@ -14,11 +14,12 @@ class Renderer {
         this.scenes = [
             {
                 scene: new Scene(this.engine),
+                background_color: new Color4(0.1, 0.1, 0.1, 1.0),
                 materials: null,
                 ground_subdivisions: [50, 50],
                 ground_mesh: null,
                 camera: null,
-                ambient: new Vector3(0.0, 0.0, 0.0),
+                ambient: new Color3(0.2, 0.2, 0.2),
                 lights: []
             }
         ];
@@ -38,8 +39,8 @@ class Renderer {
         let ground_mesh = current_scene.ground_mesh;
 
         // Set scene-wide / environment values
-        scene.clearColor = new Color4(0.1, 0.1, 0.1, 1.0);
-        scene.ambientColor = new Color3(0.2, 0.2, 0.2);
+        scene.clearColor = current_scene.background_color;
+        scene.ambientColor = current_scene.ambient;
         scene.useRightHandedSystem = true;
 
         // Create camera
@@ -85,6 +86,10 @@ class Renderer {
 
         // Animation function - called before each frame gets rendered
         scene.onBeforeRenderObservable.add(() => {
+            // update models and lights here (if needed)
+            // ...
+
+            // update uniforms in shader programs
             this.updateShaderUniforms(scene_idx, materials['illum_gouraud']);
             this.updateShaderUniforms(scene_idx, materials['illum_phong']);
             this.updateShaderUniforms(scene_idx, materials['ground_gouraud']);
