@@ -2,6 +2,7 @@
 import { Engine } from '@babylonjs/core/Engines/engine';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
+import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
 
 import { Renderer } from './renderer'
@@ -81,7 +82,8 @@ export default {
         },
 
         changeScene(event) {
-            console.log(event);
+            let scene_idx = parseInt(event.target.value.substring(5));
+            this.renderer.setActiveScene(scene_idx);
         },
         
         selectShadingAlgorithm(event) {
@@ -136,7 +138,7 @@ export default {
             <option value="scene0">Scene 0</option>
         </select>
         <select v-else id="sceneSelect" @change="changeScene">
-            <option v-for="(renderer.scenes.length, i)" :value="'scene' + i">Scene {{i}}</option>
+            <option v-for="i in renderer.scenes.length" :value="'scene' + (i - 1)">Scene {{i - 1}}</option>
         </select>
         <label for="shadingAlg">Shading Algorithm: </label>
         <select id="shadingAlg" @change="selectShadingAlgorithm">
