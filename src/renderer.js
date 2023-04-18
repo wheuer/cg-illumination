@@ -110,6 +110,10 @@ class Renderer {
     getActiveScene() {
         return this.scenes[this.active_scene].scene;
     }
+    
+    setActiveScene(idx) {
+        this.active_scene = idx;
+    }
 }
 
 export { Renderer }
