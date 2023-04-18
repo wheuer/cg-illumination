@@ -87,7 +87,7 @@ export default {
         },
         
         selectShadingAlgorithm(event) {
-            console.log(event);
+            this.renderer.setShadingAlgorithm(event.target.value);
         }
     },
     mounted() {
