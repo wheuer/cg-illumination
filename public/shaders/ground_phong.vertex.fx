@@ -11,8 +11,11 @@ uniform mat4 world;
 uniform mat4 view;
 uniform mat4 projection;
 // height displacement
+uniform vec2 ground_size;
 uniform float height_scalar;
 uniform sampler2D heightmap;
+// material
+uniform vec2 texture_scale;
 
 // Output
 out vec3 model_normal;

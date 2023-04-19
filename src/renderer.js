@@ -5,7 +5,7 @@ import { CreateSphere } from '@babylonjs/core/Meshes/Builders/sphereBuilder';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { RawTexture } from '@babylonjs/core/Materials/Textures/rawTexture';
 import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
-import { Vector3 } from '@babylonjs/core/Maths/math.vector';
+import { Vector2, Vector3 } from '@babylonjs/core/Maths/math.vector';
 
 class Renderer {
     constructor(canvas, engine, material_callback, ground_mesh_callback) {
@@ -25,6 +25,7 @@ class Renderer {
             }
         ];
         this.active_scene = 0;
+        this.active_light = 0;
         this.shading_alg = 'gouraud';
 
         this.scenes.forEach((scene, idx) => {
@@ -55,9 +56,14 @@ class Renderer {
         current_scene.camera.maxZ = 100.0;
 
         // Create point light sources
-        let light1 = new PointLight('light1', new Vector3(1.0, 1.0, 5.0), scene);
-        light1.diffuse = new Color3(1.0, 1.0, 0.8);
-        light1.specular = new Color3(1.0, 1.0, 0.8);
+        let light0 = new PointLight('light0', new Vector3(1.0, 1.0, 5.0), scene);
+        light0.diffuse = new Color3(1.0, 1.0, 1.0);
+        light0.specular = new Color3(1.0, 1.0, 1.0);
+        current_scene.lights.push(light0);
+
+        let light1 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
+        light1.diffuse = new Color3(1.0, 1.0, 1.0);
+        light1.specular = new Color3(1.0, 1.0, 1.0);
         current_scene.lights.push(light1);
 
         // Create ground mesh
@@ -69,6 +75,7 @@ class Renderer {
             mat_texture: white_texture,
             mat_specular: new Color3(0.0, 0.0, 0.0),
             mat_shininess: 1,
+            texture_scale: new Vector2(1.0, 1.0),
             height_scalar: 1.0,
             heightmap: ground_heightmap
         }
@@ -82,6 +89,7 @@ class Renderer {
             mat_texture: white_texture,
             mat_specular: new Color3(0.8, 0.8, 0.8),
             mat_shininess: 16,
+            texture_scale: new Vector2(1.0, 1.0)
         }
         sphere.material = materials['illum_' + this.shading_alg];
         current_scene.models.push(sphere);
@@ -124,14 +132,27 @@ class Renderer {
     setShadingAlgorithm(algorithm) {
         this.shading_alg = algorithm;
 
-        let current_scene = this.scenes[this.active_scene];
-        let materials = current_scene.materials;
-        let ground_mesh = current_scene.ground_mesh;
+        this.scenes.forEach((scene) => {
+            let materials = scene.materials;
+            let ground_mesh = scene.ground_mesh;
 
-        ground_mesh.material = materials['ground_' + this.shading_alg];
-        current_scene.models.forEach((model) => {
-            model.material = materials['illum_' + this.shading_alg];
+            ground_mesh.material = materials['ground_' + this.shading_alg];
+            scene.models.forEach((model) => {
+                model.material = materials['illum_' + this.shading_alg];
+            });
         });
+    }
+
+    setHeightScale(scale) {
+        this.scenes.forEach((scene) => {
+            let ground_mesh = scene.ground_mesh;
+            ground_mesh.metadata.height_scalar = scale;
+        });
+    }
+
+    setActiveLight(idx) {
+        console.log(idx);
+        this.active_light = idx;
     }
 }
 

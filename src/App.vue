@@ -4,20 +4,22 @@ import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
+import { Vector2 } from '@babylonjs/core/Maths/math.vector';
 
 import { Renderer } from './renderer'
 
 export default {
     data() {
         return {
-            renderer: null
+            renderer: null,
+            height_scale: 1.0
         }
     },
     methods: {
         createBasicMaterial(name, shader_path, scene) {
             let basic_mat = new ShaderMaterial(name, scene, shader_path, {
                 attributes: ['position', 'normal', 'uv'],
-                uniforms: ['world', 'view', 'projection', 'mat_color', 'mat_specular', 'mat_shininess',
+                uniforms: ['world', 'view', 'projection', 'mat_color', 'mat_specular', 'mat_shininess', 'texture_scale',
                            'camera_position', 'ambient', 'num_lights', 'light_positions', 'light_colors'],
                 samplers: ['mat_texture']
             });
@@ -26,6 +28,7 @@ export default {
                 const shader = basic_mat.getEffect();
                 shader.setColor3('mat_color', mesh.metadata.mat_color);
                 shader.setTexture('mat_texture', mesh.metadata.mat_texture);
+                shader.setVector2('texture_scale', mesh.metadata.texture_scale);
                 shader.setColor3('mat_specular', mesh.metadata.mat_specular);
                 shader.setFloat('mat_shininess', mesh.metadata.mat_shininess);
             });
@@ -35,8 +38,9 @@ export default {
         createGroundMaterial(name, shader_path, scene) {
             let ground_mat = new ShaderMaterial(name, scene, shader_path, {
                 attributes: ['position', 'uv'],
-                uniforms: ['world', 'view', 'projection', 'mat_color', 'mat_specular', 'mat_shininess', 'height_scalar',
-                           'camera_position', 'ambient', 'num_lights', 'light_positions', 'light_colors'],
+                uniforms: ['world', 'view', 'projection', 'mat_color', 'mat_specular', 'mat_shininess', 'ground_size',
+                           'height_scalar', 'texture_scale', 'camera_position', 'ambient', 'num_lights', 'light_positions',
+                           'light_colors'],
                 samplers: ['mat_texture', 'heightmap']
             });
             ground_mat.backFaceCulling = false;
@@ -44,8 +48,10 @@ export default {
                 const shader = ground_mat.getEffect();
                 shader.setColor3('mat_color', mesh.metadata.mat_color);
                 shader.setTexture('mat_texture', mesh.metadata.mat_texture);
+                shader.setVector2('texture_scale', mesh.metadata.texture_scale);
                 shader.setColor3('mat_specular', mesh.metadata.mat_specular);
                 shader.setFloat('mat_shininess', mesh.metadata.mat_shininess);
+                shader.setVector2('ground_size', new Vector2(mesh.scaling.x, mesh.scaling.z));
                 shader.setFloat('height_scalar', mesh.metadata.height_scalar);
                 shader.setTexture('heightmap', mesh.metadata.heightmap);
             });
@@ -88,6 +94,16 @@ export default {
         
         selectShadingAlgorithm(event) {
             this.renderer.setShadingAlgorithm(event.target.value);
+        },
+
+        updateHeightScale(event) {
+            this.height_scale = event.target.value / 10.0
+            this.renderer.setHeightScale(this.height_scale);
+        },
+
+        selectLightIdx(event) {
+            let light_idx = parseInt(event.target.value.substring(5));
+            this.renderer.setActiveLight(light_idx);
         }
     },
     mounted() {
@@ -134,24 +150,36 @@ export default {
 <template>
     <div id="userInterface">
         <label for="sceneSelect">Scene: </label>
-        <select v-if="renderer === null" id="sceneSelect" @change="changeScene">
-            <option value="scene0">Scene 0</option>
-        </select>
-        <select v-else id="sceneSelect" @change="changeScene">
-            <option v-for="i in renderer.scenes.length" :value="'scene' + (i - 1)">Scene {{i - 1}}</option>
+        <select v-if="renderer !== null" id="sceneSelect" class="spaceRight" @change="changeScene">
+            <option v-for="i in renderer.scenes.length" :value="'scene' + (i - 1)">Scene {{ i - 1 }}</option>
         </select>
         <label for="shadingAlg">Shading Algorithm: </label>
-        <select id="shadingAlg" @change="selectShadingAlgorithm">
+        <select id="shadingAlg" class="spaceRight" @change="selectShadingAlgorithm">
             <option value="gouraud">Gouraud</option>
             <option value="phong">Phong</option>
+        </select>
+        <label for="heightScale">Heighmap Scale: </label>
+        <input id="heightScale" type="range" value="10" min="1" max="50" style="width: 8rem;" @input="updateHeightScale" />
+        <label class="spaceRight" style="margin-left: 0.5rem;">{{ height_scale.toFixed(1) }}</label>
+        <label for="lightIdx">Light: </label>
+        <select v-if="renderer !== null" id="lightIdx" @change="selectLightIdx">
+            <option v-for="i in renderer.scenes[renderer.active_scene].lights.length" :value="'light' + (i - 1)">Light {{ i - 1 }}</option>
         </select>
     </div>
     <canvas id="renderCanvas" touch-action="none"></canvas>
 </template>
 
 <style scoped>
+label, input, select, option {
+    font-size: 1rem;
+}
+
 #userInterface {
     width: 100%;
-    background-color: #FFFFFF;
+    padding: 0.5rem 0 0.75rem 0;
+}
+
+.spaceRight {
+    margin-right: 2rem;
 }
 </style>

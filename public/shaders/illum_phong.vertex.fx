@@ -11,6 +11,8 @@ in vec2 uv;
 uniform mat4 world;
 uniform mat4 view;
 uniform mat4 projection;
+// material
+uniform vec2 texture_scale;
 
 // Output
 out vec3 model_normal;
