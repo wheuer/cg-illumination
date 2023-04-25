@@ -2,6 +2,7 @@ import { Scene } from '@babylonjs/core/scene';
 import { UniversalCamera } from '@babylonjs/core/Cameras/universalCamera';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
 import { CreateSphere } from '@babylonjs/core/Meshes/Builders/sphereBuilder';
+import { CreateBox } from '@babylonjs/core/Meshes/Builders/boxBuilder';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { RawTexture } from '@babylonjs/core/Materials/Textures/rawTexture';
 import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
@@ -93,6 +94,18 @@ class Renderer {
         }
         sphere.material = materials['illum_' + this.shading_alg];
         current_scene.models.push(sphere);
+
+        let box = CreateBox('box', {width: 2, height: 1, depth: 1}, scene);
+        box.position = new Vector3(-1.0, 0.5, 2.0);
+        box.metadata = {
+            mat_color: new Color3(0.75, 0.15, 0.05),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.4, 0.4, 0.4),
+            mat_shininess: 4,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        box.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(box);
 
 
         // Animation function - called before each frame gets rendered
