@@ -18,6 +18,7 @@ uniform sampler2D heightmap;
 uniform vec2 texture_scale;
 
 // Output
+out vec3 model_position;
 out vec3 model_normal;
 out vec2 model_uv;
 
@@ -25,6 +26,8 @@ void main() {
     // Get initial position of vertex (prior to height displacement)
     vec4 world_pos = world * vec4(position, 1.0);
 
+    // Pass vertex position onto the fragment shader
+    model_position = world_pos.xyz;
     // Pass vertex normal onto the fragment shader
     model_normal = vec3(0.0, 1.0, 0.0);
     // Pass vertex texcoord onto the fragment shader

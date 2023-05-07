@@ -2,6 +2,7 @@
 precision mediump float;
 
 // Input
+in vec3 model_position;
 in vec3 model_normal;
 in vec2 model_uv;
 
