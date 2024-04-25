@@ -83,7 +83,7 @@ class Renderer {
             heightmap: ground_heightmap
         }
         ground_mesh.material = materials['ground_' + this.shading_alg];
-
+        
         // Create other models
         let sphere = CreateSphere('sphere', {segments: 32}, scene);
         sphere.position = new Vector3(1.0, 0.5, 3.0);
