@@ -60,7 +60,7 @@ class Renderer {
 
         // Create point light sources
         let light0 = new PointLight('light0', new Vector3(1.0, 1.0, 5.0), scene);
-        light0.diffuse = new Color3(1.0, 1.0, 1.0);
+        light0.diffuse = new Color3(0.1, 1.0, 0.1);
         light0.specular = new Color3(1.0, 1.0, 1.0);
         current_scene.lights.push(light0);
 
@@ -68,6 +68,7 @@ class Renderer {
         light1.diffuse = new Color3(1.0, 1.0, 1.0);
         light1.specular = new Color3(1.0, 1.0, 1.0);
         current_scene.lights.push(light1);
+
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);

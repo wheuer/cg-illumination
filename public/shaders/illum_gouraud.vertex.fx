@@ -28,7 +28,17 @@ out vec3 specular_illum;
 
 void main() {
     // Pass diffuse and specular illumination onto the fragment shader
+
+    // Calculate diffuse light
     diffuse_illum = vec3(0.0, 0.0, 0.0);
+    for (int i = 0; i < num_lights; i++)
+    {
+        vec3 lightVector = normalize(light_positions[i] - position); // L
+        diffuse_illum += light_colors[i] * dot(lightVector, normal);
+    }
+
+
+    
     specular_illum = vec3(0.0, 0.0, 0.0);
 
     // Pass vertex texcoord onto the fragment shader
