@@ -12,14 +12,14 @@ uniform vec3 mat_color; // Kd
 uniform vec3 mat_specular; // Ks    
 uniform sampler2D mat_texture;
 // light from environment
-uniform vec3 ambient; // Ia
+uniform vec3 ambient; // Ia * Ka???
 
 // Output
 out vec4 FragColor;
 
 void main() {
     vec3 model_color = mat_color * texture(mat_texture, model_uv).rgb;
-    model_color += mat_color * diffuse_illum + mat_specular * specular_illum;
+    model_color += mat_color * diffuse_illum + mat_specular * specular_illum + ambient;
     // Color
     FragColor = vec4(model_color, 1.0);
 }

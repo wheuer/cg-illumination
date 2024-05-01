@@ -35,37 +35,17 @@ void main() {
     {
         vec3 lightVector = normalize(light_positions[i] - position); // L
         diffuse_illum += light_colors[i] * dot(lightVector, normal);
-        // remove any negative light
-        if (diffuse_illum[0] < 0.0) {
-            diffuse_illum[0] = 0.0;
-        }
-        if (diffuse_illum[1] < 0.0) {
-            diffuse_illum[1] = 0.0;
-        }
-        if (diffuse_illum[2] < 0.0) {
-            diffuse_illum[2] = 0.0;
-        }
+        diffuse_illum = clamp(diffuse_illum, 0.0, 1.0); // remove any negative light
     }
 
     // Calculate specular light
     specular_illum = vec3(0.0, 0.0, 0.0);
     for (int i = 0; i < num_lights; i++) {
         vec3 lightVector = normalize(light_positions[i] - position); // L
-        vec3 refLightVector = normalize((2.0 * dot(normal, lightVector) * normal) - lightVector); // R
-        vec3 viewVector = normalize(camera_position);
+        vec3 refLightVector = normalize((2.0 * dot(lightVector, normal) * normal) - lightVector); // R
+        vec3 viewVector = normalize(camera_position - position);
         specular_illum += light_colors[i] * pow(dot(refLightVector, viewVector), mat_shininess);
-        
-        // remove any negative light
-        // specular_illum = (abs(specular_illum) + specular_illum) / 2.0;
-        if (specular_illum[0] < 0.0) {
-            specular_illum[0] = 0.0;
-        }
-        if (specular_illum[1] < 0.0) {
-            specular_illum[1] = 0.0;
-        }
-        if (specular_illum[2] < 0.0) {
-            specular_illum[2] = 0.0;
-        }
+        specular_illum = clamp(specular_illum, 0.0, 1.0); // remove any negative light
     }
 
     // Pass vertex texcoord onto the fragment shader
