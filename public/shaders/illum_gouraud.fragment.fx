@@ -19,7 +19,7 @@ out vec4 FragColor;
 
 void main() {
     vec3 model_color = mat_color * texture(mat_texture, model_uv).rgb;
-    model_color += mat_color * diffuse_illum;
+    model_color += mat_color * diffuse_illum + mat_specular * specular_illum;
     // Color
     FragColor = vec4(model_color, 1.0);
 }
