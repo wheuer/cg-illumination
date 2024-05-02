@@ -27,7 +27,7 @@ out vec3 diffuse_illum;
 out vec3 specular_illum;
 
 void main() {
-    // Pass diffuse and specular illumination onto the fragment shader
+    // Calcaulte diffuse and specular illumination to pass onto the fragment shader
 
     // Calculate diffuse light
     diffuse_illum = vec3(0.0, 0.0, 0.0);
@@ -39,11 +39,10 @@ void main() {
     }
 
     // Calculate specular light
-    specular_illum = vec3(0.0, 0.0, 0.0);
+    vec3 viewVector = normalize(camera_position - position);
     for (int i = 0; i < num_lights; i++) {
         vec3 lightVector = normalize(light_positions[i] - position); // L
         vec3 refLightVector = normalize((2.0 * dot(lightVector, normal) * normal) - lightVector); // R
-        vec3 viewVector = normalize(camera_position - position);
         specular_illum += light_colors[i] * pow(dot(refLightVector, viewVector), mat_shininess);
         specular_illum = clamp(specular_illum, 0.0, 1.0); // remove any negative light
     }
