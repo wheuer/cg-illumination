@@ -34,8 +34,7 @@ void main() {
     for (int i = 0; i < num_lights; i++)
     {
         vec3 lightVector = normalize(light_positions[i] - position); // L
-        diffuse_illum += light_colors[i] * dot(lightVector, normal);
-        diffuse_illum = clamp(diffuse_illum, 0.0, 1.0); // remove any negative light
+        diffuse_illum += light_colors[i] * clamp(dot(lightVector, normal), 0.0, 1.0); // remove any negative light
     }
 
     // Calculate specular light
@@ -43,8 +42,7 @@ void main() {
     for (int i = 0; i < num_lights; i++) {
         vec3 lightVector = normalize(light_positions[i] - position); // L
         vec3 refLightVector = normalize((2.0 * dot(lightVector, normal) * normal) - lightVector); // R
-        specular_illum += light_colors[i] * pow(dot(refLightVector, viewVector), mat_shininess);
-        specular_illum = clamp(specular_illum, 0.0, 1.0); // remove any negative light
+        specular_illum += light_colors[i] * pow( clamp(dot(refLightVector, viewVector), 0.0, 1.0), mat_shininess); // remove any negative light
     }
 
     // Pass vertex texcoord onto the fragment shader

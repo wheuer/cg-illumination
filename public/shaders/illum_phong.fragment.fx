@@ -33,7 +33,7 @@ void main() {
     for (int i = 0; i < num_lights; i++)
     {
         vec3 lightVector = normalize(light_positions[i] - model_position); // L
-        model_color += clamp(mat_color * light_colors[i] * dot(lightVector, model_normal), 0.0, 1.0);
+        model_color += mat_color * light_colors[i] * clamp(dot(lightVector, model_normal), 0.0, 1.0);
     }
 
     // Calculate and add specular light
@@ -41,7 +41,7 @@ void main() {
     for (int i = 0; i < num_lights; i++) {
         vec3 lightVector = normalize(light_positions[i] - model_position); // L
         vec3 refLightVector = normalize((2.0 * dot(lightVector, model_normal) * model_normal) - lightVector); // R
-        model_color += clamp(mat_specular * light_colors[i] * pow(dot(refLightVector, viewVector), mat_shininess), 0.0, 1.0);
+        model_color += mat_specular * light_colors[i] * pow( clamp(dot(refLightVector, viewVector), 0.0, 1.0), mat_shininess);
     } 
 
     // Color
