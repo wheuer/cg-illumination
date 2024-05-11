@@ -20,6 +20,15 @@ out vec4 FragColor;
 void main() {
     vec3 model_color = mat_color * texture(mat_texture, model_uv).rgb;
     
+    // Ambient
+    model_color += mat_color * ambient;
+
+    // Diffuse
+    model_color += mat_color * diffuse_illum;
+
+    // Specular
+    model_color += mat_specular * specular_illum;
+
     // Color
     FragColor = vec4(model_color, 1.0);
 }
