@@ -155,7 +155,7 @@ class Renderer {
 
         // Create point light sources
         let light0 = new PointLight('light0', new Vector3(1.0, 1.0, 5.0), scene);
-        light0.diffuse = new Color3(0.977, 0.469, 0.996);
+        light0.diffuse = new Color3(1.0, 1.0, 1.0);
         light0.specular = new Color3(1.0, 1.0, 1.0);
         current_scene.lights.push(light0);
 
@@ -178,37 +178,35 @@ class Renderer {
         var star = new Mesh("custom", scene);
 
         // generate ten points, 5 along the outer radius, 5 along the inner radius
+        //var positions = new Float32Array(20*3*3);
         var positions = [];
         var idx_cnt = 0;
+        var count = 0;
         var indices = [];
         var out_rad = 5.0; // outer radius
         var in_rad = 3.0;  // inner radius
         // out x, out y, out z, in x, in y, in z, center x, center y, center z
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 5; i++) {
             if (i > 0) {
                 positions.push( out_rad * Math.cos(Math.PI/2.0 + (2.0*i*Math.PI)/5.0) ); // x
                 positions.push( out_rad * Math.sin(Math.PI/2.0 + (2.0*i*Math.PI)/5.0) + 5.0 ); // y
                 positions.push( -2.0 ); // z
                 indices.push(idx_cnt);
 
-                positions.push( positions[9*i-6] ); // x
-                positions.push( positions[9*i-5] ); // y
-                positions.push( positions[9*i-4] ); // z
                 if (i == 1) {
                     indices.push(idx_cnt-2);
                 } else {
                     indices.push(idx_cnt-1);
                 }
                
-                positions.push( 0.0 ); // x
-                positions.push( 5.0 ); // y
-                positions.push( 0.0 ); // z
                 indices.push(2);
             } 
 
-            positions.push( out_rad * Math.cos(Math.PI/2.0 + (2.0*i*Math.PI)/5.0) ); // x
-            positions.push( out_rad * Math.sin(Math.PI/2.0 + (2.0*i*Math.PI)/5.0) + 5.0 ); // y
-            positions.push( -2.0 ); // z
+            if (i == 0) {
+                positions.push( out_rad * Math.cos(Math.PI/2.0 + (2.0*i*Math.PI)/5.0) ); // x
+                positions.push( out_rad * Math.sin(Math.PI/2.0 + (2.0*i*Math.PI)/5.0) + 5.0 ); // y
+                positions.push( -2.0 ); // z
+            }
             indices.push(idx_cnt);
             idx_cnt++;
             
@@ -218,80 +216,51 @@ class Renderer {
             indices.push(idx_cnt);
             idx_cnt++;
 
-            positions.push( 0.0 ); // x
-            positions.push( 5.0 ); // y
-            positions.push( 0.0 ); // z
-            indices.push(2);
             if (i == 0) { // if it's the first time through the loop
+                positions.push( 0.0 ); // x
+                positions.push( 5.0 ); // y
+                positions.push( 0.0 ); // z
                 idx_cnt++;
+            }
+            indices.push(2);
+
+            if (i == 4) { //if it's the last time, we have to add the last triangle
+                indices.push(0);  // first outer point
+                indices.push(10); // last inner
+                indices.push(2);  // center 
             }
         }
 
-        indices = [0, 1, 2, 4, 5, 6, 7, 8, 9];
+        // add back point to positions
+        positions.push( 0.0 );
+        positions.push( 5.0 );
+        positions.push( -4.0 );
 
-        console.log(positions);
-        console.log(indices);
+        // add all of the back points to indices
+        var len = indices.length;
+        for (let i = 0; i < len; i++) {
+            if (indices[i] == 2) {
+                indices.push(11);
+            } else {
+                indices.push(indices[i]);
+            }
+        }
 
-        // front center point is (0.0, 5.0, 1.0), index 0
-        // back center point is (0.0, 5.0, 3.0),  index 11
-
-        // create triangles from generated points starting from the top left triangle
-        // var positions = [ outer[0],  outer[1],  outer[2],  inner[9], inner[10], inner[11], 0.0, 5.0, 1.0, // 1 trangle
-        //                   outer[3],  outer[4],  outer[5],  inner[9], inner[10], inner[11], 0.0, 5.0, 1.0, // 2
-        //                   outer[3],  outer[4],  outer[5], inner[12], inner[13], inner[14], 0.0, 5.0, 1.0, // 3
-        //                   outer[6],  outer[7],  outer[8], inner[12], inner[13], inner[14], 0.0, 5.0, 1.0, // 4
-        //                   outer[6],  outer[7],  outer[8],  inner[0],  inner[1],  inner[2], 0.0, 5.0, 1.0, // 5
-        //                   outer[9], outer[10], outer[11],  inner[0],  inner[1],  inner[2], 0.0, 5.0, 1.0, // 6
-        //                   outer[9], outer[10], outer[11],  inner[3],  inner[4],  inner[5], 0.0, 5.0, 1.0, // 7
-        //                  outer[12], outer[13], outer[14],  inner[3],  inner[4],  inner[5], 0.0, 5.0, 1.0, // 8
-        //                  outer[12], outer[13], outer[14],  inner[6],  inner[7],  inner[8], 0.0, 5.0, 1.0, // 9
-        //                   outer[0],  outer[1],  outer[2],  inner[6],  inner[7],  inner[8], 0.0, 5.0, 1.0, // 10
-        //                   outer[0],  outer[1],  outer[2],  inner[9], inner[10], inner[11], 0.0, 5.0, 3.0, // 11
-        //                   outer[3],  outer[4],  outer[5],  inner[9], inner[10], inner[11], 0.0, 5.0, 3.0, // 12
-        //                   outer[3],  outer[4],  outer[5], inner[12], inner[13], inner[14], 0.0, 5.0, 3.0, // 13
-        //                   outer[6],  outer[7],  outer[8], inner[12], inner[13], inner[14], 0.0, 5.0, 3.0, // 14
-        //                   outer[6],  outer[7],  outer[8],  inner[0],  inner[1],  inner[2], 0.0, 5.0, 3.0, // 15
-        //                   outer[9], outer[10], outer[11],  inner[0],  inner[1],  inner[2], 0.0, 5.0, 3.0, // 16
-        //                   outer[9], outer[10], outer[11],  inner[3],  inner[4],  inner[5], 0.0, 5.0, 3.0, // 17
-        //                  outer[12], outer[13], outer[14],  inner[3],  inner[4],  inner[5], 0.0, 5.0, 3.0, // 18
-        //                  outer[12], outer[13], outer[14],  inner[6],  inner[7],  inner[8], 0.0, 5.0, 3.0, // 19
-        //                   outer[0],  outer[1],  outer[2],  inner[6],  inner[7],  inner[8], 0.0, 5.0, 3.0,];
-        // var indices = [1,  2, 0,  // 1 triangle
-        //                3,  2, 0,  // 2
-        //                3,  4, 0,  // 3
-        //                5,  4, 0,  // 4
-        //                5,  6, 0,  // 5
-        //                7,  6, 0,  // 6
-        //                7,  8, 0,  // 7
-        //                9,  8, 0,  // 8
-        //                9, 10, 0,  // 9
-        //                1, 10, 0,  // 10
-        //                1,  2, 11, // 11
-        //                3,  2, 11, // 12
-        //                3,  4, 11, // 13
-        //                5,  4, 11, // 14
-        //                5,  6, 11, // 15
-        //                7,  6, 11, // 16
-        //                7,  8, 11, // 17
-        //                9,  8, 11, // 18
-        //                9, 10, 11, // 19
-        //                1, 10, 11]; 
-
+        var normals = [];
         var vertexData = new VertexData();
-        //var vertexBuffer = new VertexBuffer(AbstractEngine, vertexData, "PositionKind", true, size=180);
+        VertexData.ComputeNormals(positions, indices, normals);
 
         vertexData.positions = positions;
         vertexData.indices = indices; 
-        
-        console.log(vertexData);
+        vertexData.normals = normals;
 
         vertexData.applyToMesh(star, true);
 
         star.metadata = {
-            mat_color: new Color3(0.75, 0.15, 0.05),
+            mat_color: new Color3(0.961, 0.996, 0.469),
             mat_texture: white_texture,
-            mat_specular: new Color3(0.4, 0.4, 0.4),
-            mat_shininess: 5,
+            mat_specular: new Color3(0.1, 0.1, 0.1),
+            mat_shininess: 8,
             texture_scale: new Vector2(1.0, 1.0)
         }
         star.material = materials['illum_' + this.shading_alg];
