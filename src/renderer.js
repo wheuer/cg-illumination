@@ -173,6 +173,45 @@ class Renderer {
             heightmap: ground_heightmap
         }
         ground_mesh.material = materials['ground_' + this.shading_alg];
+
+        // Spherical model: MARS
+        let mars = CreateSphere('sphere', {diameter: 10.0, segments: 32}, scene);
+        mars.position = new Vector3(-26.0, 17.0, -20.0);
+        mars.metadata = {
+            mat_color: new Color3(0.9, 0.9, 0.9),
+            mat_texture: new Texture(BASE_URL + 'textures/mars.jpg', scene),
+            mat_specular: new Color3(0.1, 0.1, 0.1),
+            mat_shininess: 10,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        mars.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(mars);
+
+        // Spherical model: JUPITER
+        let jupiter = CreateSphere('sphere', {diameter: 20.0, segments: 32}, scene);
+        jupiter.position = new Vector3(20.0, 12.0, -20.0);
+        jupiter.metadata = {
+            mat_color: new Color3(0.9, 0.9, 0.9),
+            mat_texture: new Texture(BASE_URL + 'textures/jupiter.jpg', scene),
+            mat_specular: new Color3(0.2, 0.2, 0.2),
+            mat_shininess: 16,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        jupiter.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(jupiter);
+
+        // Spherical model: NEPTUNE
+        let neptune = CreateSphere('sphere', {diameter: 7.0, segments: 32}, scene);
+        neptune.position = new Vector3(-16.0, 7.0, -20.0);
+        neptune.metadata = {
+            mat_color: new Color3(0.9, 0.9, 0.9),
+            mat_texture: new Texture(BASE_URL + 'textures/neptune.jpg', scene),
+            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_shininess: 20,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        neptune.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(neptune);
         
         // Create custom model: STAR
         var star = new Mesh("custom", scene);
