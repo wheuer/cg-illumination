@@ -30,7 +30,7 @@ class Renderer {
             },
             {
                 scene: new Scene(this.engine),
-                background_color: new Color4(0.173, 0.004, 0.258, 1.0),
+                background_color: new Color4(0.103, 0.004, 0.127, 1.0),
                 materials: null,
                 ground_subdivisions: [50, 50],
                 ground_mesh: null,
@@ -145,7 +145,7 @@ class Renderer {
         scene.useRightHandedSystem = true;
 
         // Create camera
-        current_scene.camera = new UniversalCamera('camera', new Vector3(0.0, 1.8, 10.0), scene);
+        current_scene.camera = new UniversalCamera('camera', new Vector3(0.0, 5, 40.0), scene);
         current_scene.camera.setTarget(new Vector3(0.0, 5.0, 0.0));
         current_scene.camera.upVector = new Vector3(0.0, 1.0, 0.0);
         current_scene.camera.attachControl(this.canvas, true);
@@ -161,10 +161,10 @@ class Renderer {
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
-        let ground_heightmap = new Texture(BASE_URL + 'heightmaps/default.png', scene);
-        ground_mesh.scaling = new Vector3(20.0, 1.0, 20.0);
+        let ground_heightmap = new Texture(BASE_URL + 'heightmaps/moon.jpg', scene);
+        ground_mesh.scaling = new Vector3(60.0, 10.0, 60.0);
         ground_mesh.metadata = {
-            mat_color: new Color3(0.173, 0.004, 0.258),
+            mat_color: new Color3(0.406, 0.406, 0.344),
             mat_texture: white_texture,
             mat_specular: new Color3(0.0, 0.0, 0.0),
             mat_shininess: 1,
@@ -184,13 +184,13 @@ class Renderer {
         var count = 0;
         var indices = [];
         var out_rad = 5.0; // outer radius
-        var in_rad = 3.0;  // inner radius
+        var in_rad = 2.5;  // inner radius
         // out x, out y, out z, in x, in y, in z, center x, center y, center z
         for (let i = 0; i < 5; i++) {
             if (i > 0) {
                 positions.push( out_rad * Math.cos(Math.PI/2.0 + (2.0*i*Math.PI)/5.0) ); // x
                 positions.push( out_rad * Math.sin(Math.PI/2.0 + (2.0*i*Math.PI)/5.0) + 5.0 ); // y
-                positions.push( -2.0 ); // z
+                positions.push( 0.0 ); // z
                 indices.push(idx_cnt);
 
                 if (i == 1) {
@@ -205,21 +205,21 @@ class Renderer {
             if (i == 0) {
                 positions.push( out_rad * Math.cos(Math.PI/2.0 + (2.0*i*Math.PI)/5.0) ); // x
                 positions.push( out_rad * Math.sin(Math.PI/2.0 + (2.0*i*Math.PI)/5.0) + 5.0 ); // y
-                positions.push( -2.0 ); // z
+                positions.push( 0.0 ); // z
             }
             indices.push(idx_cnt);
             idx_cnt++;
             
             positions.push( in_rad * Math.cos((2.0*Math.PI)/10.0 + Math.PI/2.0 + (2.0*i*Math.PI)/5.0) ); // x
             positions.push( in_rad * Math.sin((2.0*Math.PI)/10.0 + Math.PI/2.0 + (2.0*i*Math.PI)/5.0) + 5.0 ); // y
-            positions.push( -2.0 ); // z
+            positions.push( 0.0 ); // z
             indices.push(idx_cnt);
             idx_cnt++;
 
             if (i == 0) { // if it's the first time through the loop
                 positions.push( 0.0 ); // x
                 positions.push( 5.0 ); // y
-                positions.push( 0.0 ); // z
+                positions.push( 2.0 ); // z
                 idx_cnt++;
             }
             indices.push(2);
@@ -234,7 +234,7 @@ class Renderer {
         // add back point to positions
         positions.push( 0.0 );
         positions.push( 5.0 );
-        positions.push( -4.0 );
+        positions.push( -2.0 );
 
         // add all of the back points to indices
         var len = indices.length;
@@ -257,10 +257,10 @@ class Renderer {
         vertexData.applyToMesh(star, true);
 
         star.metadata = {
-            mat_color: new Color3(0.961, 0.996, 0.469),
+            mat_color: new Color3(0.761, 0.796, 0.269),
             mat_texture: white_texture,
-            mat_specular: new Color3(0.1, 0.1, 0.1),
-            mat_shininess: 8,
+            mat_specular: new Color3(0.6, 0.6, 0.6),
+            mat_shininess: 1,
             texture_scale: new Vector2(1.0, 1.0)
         }
         star.material = materials['illum_' + this.shading_alg];
@@ -270,7 +270,7 @@ class Renderer {
         scene.onBeforeRenderObservable.add(() => {
             // update models and lights here (if needed)
             // ...
-
+            star.addRotation(0, Math.PI/80, 0);
             // update uniforms in shader programs
             this.updateShaderUniforms(scene_idx, materials['illum_' + this.shading_alg]);
             this.updateShaderUniforms(scene_idx, materials['ground_' + this.shading_alg]);
