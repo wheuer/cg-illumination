@@ -6,8 +6,7 @@
         "name": "Tommy Marrinan",
         "email": "thomas.j.marrinan@gmail.com"
     },
-    "contributors": [
-    ],
+    "contributors": [],
     "repository": {},
     "scripts": {
         "dev": "vite",
@@ -15,11 +14,12 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@babylonjs/loaders": "^7.6.0",
         "vue": "^3.4.21"
     },
     "devDependencies": {
+        "@babylonjs/core": "^7.2.1",
         "@vitejs/plugin-vue": "^5.0.4",
-        "vite": "^5.2.8",
-        "@babylonjs/core": "^7.2.1"
+        "vite": "^5.2.8"
     }
 }

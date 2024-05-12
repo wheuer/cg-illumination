@@ -1,36 +1,24 @@
 import { Scene } from '@babylonjs/core/scene';
 import { UniversalCamera } from '@babylonjs/core/Cameras/universalCamera';
-import { PointLight } from '@babylonjs/core/Lights/pointLight';
+import { PointLight, HemisphericLight } from '@babylonjs/core/Lights';
 import { CreateSphere } from '@babylonjs/core/Meshes/Builders/sphereBuilder';
 import { CreateBox } from '@babylonjs/core/Meshes/Builders/boxBuilder';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
+import { CubeTexture, SceneLoader } from '@babylonjs/core';
 import { RawTexture } from '@babylonjs/core/Materials/Textures/rawTexture';
 import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
 import { Vector2, Vector3 } from '@babylonjs/core/Maths/math.vector';
-import { Mesh, MeshBuilder } from '@babylonjs/core';
+import { Mesh, MeshBuilder, StandardMaterial } from '@babylonjs/core';
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
+import { KeyboardEventTypes } from '@babylonjs/core';
 
-import { KeyboardEventTypes } from '@babylonjs/core/'
+import "@babylonjs/core/Loading/loadingScreen";
+import "@babylonjs/loaders/glTF";
+import "@babylonjs/core/Materials/standardMaterial";
+import "@babylonjs/core/Materials/Textures/Loaders/envTextureLoader";
+import "@babylonjs/core/Animations/animatable"
 
 const BASE_URL = import.meta.env.BASE_URL || '/';
-window.addEventListener("keydown", checkKeyPressed, false);
-
-function checkKeyPressed(evt) {
-    if (evt.keyCode == "87") {        // move light FORWARD
-        let cur_scene = this.getActiveScene();
-        cur_scene.lights[this.active_light].position[1] = cur_scene.lights[this.active_light].position[1] + 0.5;
-    } else if (evt.keyCode == "83") { // move light BACKWARD
-
-    } else if (evt.keyCode == "65") { // move light LEFT 
-
-    } else if (evt.keyCode == "68") { // move light RIGHT
-
-    } else if (evt.keyCode == "70") { // move light UP
-
-    } else if (evt.keyCode == "82") { // move light DOWN
-
-    }
-}
 
 class Renderer {
     constructor(canvas, engine, material_callback, ground_mesh_callback) {
@@ -56,6 +44,17 @@ class Renderer {
                 ground_mesh: null,
                 camera: null,
                 ambient: new Color3(0.2, 0.2, 0.2),
+                lights: [],
+                models: []
+            },
+            {
+                scene: new Scene(this.engine),
+                background_color: new Color4(0.103, 0.004, 0.127, 1.0),
+                materials: null,
+                ground_subdivisions: [0, 0],
+                ground_mesh: null,
+                camera: null,
+                ambient: new Color3(1.0, 1.0, 1.0),
                 lights: [],
                 models: []
             }
@@ -363,6 +362,102 @@ class Renderer {
             switch (kbInfo.type) {
               case KeyboardEventTypes.KEYDOWN:
                 let light = this.scenes[this.active_scene].lights[this.active_light];  
+                let lightStepSize = 0.1;
+                switch (kbInfo.event.key) {
+                    case "w":
+                    case "W":
+                        light.position = new Vector3(light.position.x, light.position.y, light.position.z - lightStepSize);
+                        break;
+                    case "a":
+                    case "A":
+                        light.position = new Vector3(light.position.x - lightStepSize, light.position.y, light.position.z);
+                        break;
+                    case "s":
+                    case "S":
+                        light.position = new Vector3(light.position.x, light.position.y, light.position.z + lightStepSize);
+                        break;
+                    case "d":
+                    case "D":
+                        light.position = new Vector3(light.position.x + lightStepSize, light.position.y, light.position.z);
+                        break;
+                    case "f":
+                    case "F":
+                        light.position = new Vector3(light.position.x, light.position.y - lightStepSize, light.position.z);
+                        break;
+                    case "r":
+                    case "R":
+                        light.position = new Vector3(light.position.x, light.position.y + lightStepSize, light.position.z);
+                        break;
+                }
+            //     console.log(light.position);
+            }
+        });
+    }
+
+    createScene2(scene_idx) {
+        let current_scene = this.scenes[scene_idx];
+        let scene = current_scene.scene;
+        let materials = current_scene.materials;
+        let ground_mesh = current_scene.ground_mesh;
+
+        // Set scene-wide / environment values
+        scene.clearColor = current_scene.background_color;
+        scene.ambientColor = current_scene.ambient;
+        scene.useRightHandedSystem = true;
+
+        // Create camera
+        current_scene.camera = new UniversalCamera('camera', new Vector3(0.0, 25.0, 50.0), scene);
+        current_scene.camera.setTarget(new Vector3(0.0, 5.0, 0.0));
+        current_scene.camera.upVector = new Vector3(0.0, 1.0, 0.0);
+        current_scene.camera.attachControl(this.canvas, true);
+        current_scene.camera.fov = 35.0 * (Math.PI / 180);
+        current_scene.camera.minZ = 0.1;
+        current_scene.camera.maxZ = 1000.0;
+
+        // Need to always create the ground mesh, but just have it be [0, 0] in size
+        let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
+        let ground_heightmap = new Texture(BASE_URL + 'heightmaps/moon.jpg', scene);
+        ground_mesh.scaling = new Vector3(60.0, 10.0, 60.0);
+        ground_mesh.metadata = {
+            mat_color: new Color3(0.0, 0.0, 0.0),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_shininess: 1,
+            texture_scale: new Vector2(1.0, 1.0),
+            height_scalar: 1.0,
+            heightmap: ground_heightmap
+        }
+        ground_mesh.material = materials['ground_' + this.shading_alg];
+
+        // Create hemisphereic light, its the only working light source that I found works for the imported meshes
+        let light = new HemisphericLight("HemiLight", new Vector3(0, 1, 0), scene);
+
+        let light0 = new PointLight('light0', new Vector3(1.0, 1.0, 5.0), scene);
+        light0.diffuse = new Color3(1.0, 1.0, 1.0);
+        light0.specular = new Color3(1.0, 1.0, 1.0);
+        current_scene.lights.push(light0);
+
+        // Clouds skybox
+        let skybox = MeshBuilder.CreateBox("skyBox",  {size:1, height:500, width:500, depth:500}, scene);
+        let skyboxMaterial = new StandardMaterial("skyBox", scene);
+        skybox.position = new Vector3(0.0, 3.0, 0.0);
+        skyboxMaterial.backFaceCulling = false;
+        skyboxMaterial.reflectionTexture = new CubeTexture("textures/skybox/skybox", scene);
+        skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+        skyboxMaterial.disableLighting = true;
+        skybox.material = skyboxMaterial;	
+
+        // Plane
+        SceneLoader.ImportMesh("", "./meshes/", "aerobatic_plane.glb", scene, (meshes) => {
+            for (var i = 0; i < meshes.length; i++){
+                meshes[i].scaling = new Vector3(10, 10, 10);
+            }; 
+        });
+            
+        scene.onKeyboardObservable.add((kbInfo) => {
+            switch (kbInfo.type) {
+                case KeyboardEventTypes.KEYDOWN:
+                let light = this.scenes[this.active_scene].lights[this.active_light];  
                 let lightStepSize = 0.25;
                 switch (kbInfo.event.key) {
                     case "w":
@@ -390,7 +485,7 @@ class Renderer {
                         light.position = new Vector3(light.position.x, light.position.y + lightStepSize, light.position.z);
                         break;
                 }
-                console.log(light.position);
+                // console.log(light.position);
             }
         });
 
@@ -398,7 +493,7 @@ class Renderer {
         scene.onBeforeRenderObservable.add(() => {
             // update models and lights here (if needed)
             // ...
-            star.addRotation(0, Math.PI/80, 0);
+           
             // update uniforms in shader programs
             this.updateShaderUniforms(scene_idx, materials['illum_' + this.shading_alg]);
             this.updateShaderUniforms(scene_idx, materials['ground_' + this.shading_alg]);
