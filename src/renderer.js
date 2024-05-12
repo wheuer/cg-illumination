@@ -11,6 +11,20 @@ import { Mesh, MeshBuilder } from '@babylonjs/core';
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
 
 const BASE_URL = import.meta.env.BASE_URL || '/';
+window.addEventListener("keydown", checkKeyPressed, false);
+
+function checkKeyPressed(evt) {
+    if (evt.keyCode == "87") {        // move light UP
+        let cur_scene = this.getActiveScene();
+        cur_scene.lights[this.active_light].position[1] = cur_scene.lights[this.active_light].position[1] + 0.5;
+    } else if (evt.keyCode == "83") { // move light DOWN
+
+    } else if (evt.keyCode == "65") { // move light LEFT 
+
+    } else if (evt.keyCode == "68") { // move light RIGHT
+
+    }
+}
 
 class Renderer {
     constructor(canvas, engine, material_callback, ground_mesh_callback) {
@@ -217,7 +231,6 @@ class Renderer {
         var star = new Mesh("custom", scene);
 
         // generate ten points, 5 along the outer radius, 5 along the inner radius
-        //var positions = new Float32Array(20*3*3);
         var positions = [];
         var idx_cnt = 0;
         var count = 0;
