@@ -10,6 +10,8 @@ import { Vector2, Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Mesh, MeshBuilder } from '@babylonjs/core';
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
 
+import { KeyboardEventTypes } from '@babylonjs/core/'
+
 const BASE_URL = import.meta.env.BASE_URL || '/';
 
 class Renderer {
@@ -77,10 +79,10 @@ class Renderer {
         light0.specular = new Color3(1.0, 1.0, 1.0);
         current_scene.lights.push(light0);
 
-        let light1 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
-        light1.diffuse = new Color3(1.0, 1.0, 1.0);
-        light1.specular = new Color3(1.0, 1.0, 1.0);
-        current_scene.lights.push(light1);
+        // let light1 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
+        // light1.diffuse = new Color3(1.0, 1.0, 1.0);
+        // light1.specular = new Color3(1.0, 1.0, 1.0);
+        // current_scene.lights.push(light1);
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
@@ -121,6 +123,41 @@ class Renderer {
         }
         box.material = materials['illum_' + this.shading_alg];
         current_scene.models.push(box);
+
+        scene.onKeyboardObservable.add((kbInfo) => {
+            switch (kbInfo.type) {
+              case KeyboardEventTypes.KEYDOWN:
+                let light = this.scenes[this.active_scene].lights[this.active_light];  
+                let lightStepSize = 0.25;
+                switch (kbInfo.event.key) {
+                    case "w":
+                    case "W":
+                        light.position = new Vector3(light.position.x, light.position.y, light.position.z - lightStepSize);
+                        break;
+                    case "a":
+                    case "A":
+                        light.position = new Vector3(light.position.x - lightStepSize, light.position.y, light.position.z);
+                        break;
+                    case "s":
+                    case "S":
+                        light.position = new Vector3(light.position.x, light.position.y, light.position.z + lightStepSize);
+                        break;
+                    case "d":
+                    case "D":
+                        light.position = new Vector3(light.position.x + lightStepSize, light.position.y, light.position.z);
+                        break;
+                    case "f":
+                    case "F":
+                        light.position = new Vector3(light.position.x, light.position.y - lightStepSize, light.position.z);
+                        break;
+                    case "r":
+                    case "R":
+                        light.position = new Vector3(light.position.x, light.position.y + lightStepSize, light.position.z);
+                        break;
+                }
+                // console.log(light.position);
+            }
+        });
 
         // Animation function - called before each frame gets rendered
         scene.onBeforeRenderObservable.add(() => {
@@ -304,6 +341,41 @@ class Renderer {
         }
         star.material = materials['illum_' + this.shading_alg];
         current_scene.models.push(star);
+
+        scene.onKeyboardObservable.add((kbInfo) => {
+            switch (kbInfo.type) {
+              case KeyboardEventTypes.KEYDOWN:
+                let light = this.scenes[this.active_scene].lights[this.active_light];  
+                let lightStepSize = 0.25;
+                switch (kbInfo.event.key) {
+                    case "w":
+                    case "W":
+                        light.position = new Vector3(light.position.x, light.position.y, light.position.z - lightStepSize);
+                        break;
+                    case "a":
+                    case "A":
+                        light.position = new Vector3(light.position.x - lightStepSize, light.position.y, light.position.z);
+                        break;
+                    case "s":
+                    case "S":
+                        light.position = new Vector3(light.position.x, light.position.y, light.position.z + lightStepSize);
+                        break;
+                    case "d":
+                    case "D":
+                        light.position = new Vector3(light.position.x + lightStepSize, light.position.y, light.position.z);
+                        break;
+                    case "f":
+                    case "F":
+                        light.position = new Vector3(light.position.x, light.position.y - lightStepSize, light.position.z);
+                        break;
+                    case "r":
+                    case "R":
+                        light.position = new Vector3(light.position.x, light.position.y + lightStepSize, light.position.z);
+                        break;
+                }
+                console.log(light.position);
+            }
+        });
 
         // Animation function - called before each frame gets rendered
         scene.onBeforeRenderObservable.add(() => {
