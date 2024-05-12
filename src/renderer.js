@@ -16,14 +16,18 @@ const BASE_URL = import.meta.env.BASE_URL || '/';
 window.addEventListener("keydown", checkKeyPressed, false);
 
 function checkKeyPressed(evt) {
-    if (evt.keyCode == "87") {        // move light UP
+    if (evt.keyCode == "87") {        // move light FORWARD
         let cur_scene = this.getActiveScene();
         cur_scene.lights[this.active_light].position[1] = cur_scene.lights[this.active_light].position[1] + 0.5;
-    } else if (evt.keyCode == "83") { // move light DOWN
+    } else if (evt.keyCode == "83") { // move light BACKWARD
 
     } else if (evt.keyCode == "65") { // move light LEFT 
 
     } else if (evt.keyCode == "68") { // move light RIGHT
+
+    } else if (evt.keyCode == "70") { // move light UP
+
+    } else if (evt.keyCode == "82") { // move light DOWN
 
     }
 }
