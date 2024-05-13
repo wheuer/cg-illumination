@@ -82,7 +82,7 @@ class Renderer {
         scene.useRightHandedSystem = true;
 
         // Create camera
-        current_scene.camera = new UniversalCamera('camera', new Vector3(0.0, 1.8, 10.0), scene);
+        current_scene.camera = new UniversalCamera('camera', new Vector3(0.0, 1.8, 20.0), scene);
         current_scene.camera.setTarget(new Vector3(0.0, 1.8, 0.0));
         current_scene.camera.upVector = new Vector3(0.0, 1.0, 0.0);
         current_scene.camera.attachControl(this.canvas, true);
@@ -91,15 +91,20 @@ class Renderer {
         current_scene.camera.maxZ = 100.0;
 
         // Create point light sources
-        let light0 = new PointLight('light0', new Vector3(1.0, 0.1, 5.0), scene);
-        light0.diffuse = new Color3(0.0, 0.0, 1.0);
-        light0.specular = new Color3(1.0, 0.0, 1.0);
+        let light0 = new PointLight('light0', new Vector3(10.0, 2.0, -20.0), scene);
+        light0.diffuse = new Color3(1.0, 0.0, 0.0);
+        light0.specular = new Color3(1.0, 0.0, 0.0);
         current_scene.lights.push(light0);
 
-        // let light1 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
-        // light1.diffuse = new Color3(1.0, 1.0, 1.0);
-        // light1.specular = new Color3(1.0, 1.0, 1.0);
-        // current_scene.lights.push(light1);
+        let light1 = new PointLight('light1', new Vector3(10.0, 2.0, 0.0), scene);
+        light1.diffuse = new Color3(0.0, 1.0, 0.0);
+        light1.specular = new Color3(0.0, 1.0, 0.0);
+        current_scene.lights.push(light1);
+
+        let light2 = new PointLight('light2', new Vector3(-10.0, 10.0, -10.0), scene);
+        light2.diffuse = new Color3(0.0, 0.0, 1.0);
+        light2.specular = new Color3(0.0, 0.0, 1.0);
+        current_scene.lights.push(light2);
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
@@ -118,35 +123,40 @@ class Renderer {
         ground_mesh.material = materials['ground_' + this.shading_alg];
         
         // Create other models
-        let sphere = CreateSphere('sphere', {segments: 32}, scene);
-        sphere.position = new Vector3(1.0, 0.5, 3.0);
-        sphere.metadata = {
-            mat_color: new Color3(0.10, 0.35, 0.88),
-            mat_texture: white_texture,
-            mat_specular: new Color3(0.8, 0.8, 0.8),
-            mat_shininess: 16,
-            texture_scale: new Vector2(1.0, 1.0)
+        var colors = [237, 51, 38, 237, 118, 38, 237, 204, 38, 207, 237, 38, 131, 237, 38, 38, 237, 48, 38, 191, 237, 38, 51, 237, 108, 38, 237, 151, 38, 237];
+        for (let i = 0; i < 10; i++) {
+            let sphere = CreateSphere('sphere'+i, {segments: 32}, scene);
+            sphere.position = new Vector3(-8.5+1.9*i, 1.5, 2.0);
+            sphere.metadata = {
+                mat_color: new Color3(colors[3*i]/256, colors[3*i+1]/256, colors[3*i+2]/256),
+                mat_texture: white_texture,
+                mat_specular: new Color3(0.8, 0.8, 0.8),
+                mat_shininess: 16,
+                texture_scale: new Vector2(1.0, 1.0)
+            }
+            sphere.material = materials['illum_' + this.shading_alg];
+            sphere.scaling = new Vector3(0.2*i+0.1,1,1);
+            current_scene.models.push(sphere);
         }
-        sphere.material = materials['illum_' + this.shading_alg];
-        current_scene.models.push(sphere);
 
         let box = CreateBox('box', {width: 2, height: 1, depth: 1}, scene);
-        box.position = new Vector3(-1.0, 0.5, 2.0);
+        box.position = new Vector3(0.0, 0.5, 2.0);
         box.metadata = {
-            mat_color: new Color3(0.75, 0.15, 0.05),
+            mat_color: new Color3(237/256, 38/256, 207/256),
             mat_texture: white_texture,
             mat_specular: new Color3(0.4, 0.4, 0.4),
             mat_shininess: 4,
             texture_scale: new Vector2(1.0, 1.0)
         }
         box.material = materials['illum_' + this.shading_alg];
+        box.scaling = new Vector3(9,1,2);
         current_scene.models.push(box);
 
         scene.onKeyboardObservable.add((kbInfo) => {
             switch (kbInfo.type) {
               case KeyboardEventTypes.KEYDOWN:
                 let light = this.scenes[this.active_scene].lights[this.active_light];  
-                let lightStepSize = 0.25;
+                let lightStepSize = 0.1;
                 switch (kbInfo.event.key) {
                     case "w":
                     case "W":
@@ -173,7 +183,6 @@ class Renderer {
                         light.position = new Vector3(light.position.x, light.position.y + lightStepSize, light.position.z);
                         break;
                 }
-                // console.log(light.position);
             }
         });
 
@@ -390,7 +399,6 @@ class Renderer {
                         light.position = new Vector3(light.position.x, light.position.y + lightStepSize, light.position.z);
                         break;
                 }
-            //     console.log(light.position);
             }
         });
 
@@ -497,7 +505,6 @@ class Renderer {
                         light.position = new Vector3(light.position.x, light.position.y + lightStepSize, light.position.z);
                         break;
                 }
-                // console.log(light.position);
             }
         });
 

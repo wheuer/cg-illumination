@@ -7,7 +7,7 @@ import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData';
 import { Effect } from '@babylonjs/core/Materials/effect';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { ShaderMaterial } from '@babylonjs/core/Materials/shaderMaterial';
-import { Vector2 } from '@babylonjs/core/Maths/math.vector';
+import { Vector2, Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { Tools } from '@babylonjs/core/Misc/tools';
 
 import { Renderer } from './renderer'
