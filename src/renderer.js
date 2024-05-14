@@ -456,8 +456,8 @@ class Renderer {
         let light = new HemisphericLight("HemiLight", new Vector3(0, 1, 0), scene);
 
         let light0 = new PointLight('light0', new Vector3(1.0, 1.0, 5.0), scene);
-        light0.diffuse = new Color3(1.0, 1.0, 1.0);
-        light0.specular = new Color3(1.0, 1.0, 1.0);
+        light0.diffuse = new Color3(252/256, 223/256, 3/256);
+        light0.specular = new Color3(252/256, 223/256, 3/256);
         current_scene.lights.push(light0);
 
         // Clouds skybox
@@ -543,6 +543,7 @@ class Renderer {
     
     setActiveScene(idx) {
         this.active_scene = idx;
+        this.active_light = 0;
     }
 
     setShadingAlgorithm(algorithm) {
