@@ -32,7 +32,7 @@ class Renderer {
                 ground_subdivisions: [50, 50],
                 ground_mesh: null,
                 camera: null,
-                ambient: new Color3(0.2, 0.2, 0.2),
+                ambient: new Color3(0.0, 0.0, 0.0),
                 lights: [],
                 models: []
             },
@@ -43,7 +43,7 @@ class Renderer {
                 ground_subdivisions: [50, 50],
                 ground_mesh: null,
                 camera: null,
-                ambient: new Color3(0.2, 0.2, 0.2),
+                ambient: new Color3(0.0, 0.0, 0.0),
                 lights: [],
                 models: []
             },
@@ -219,8 +219,8 @@ class Renderer {
 
         // Create point light sources
         let light0 = new PointLight('light0', new Vector3(1.0, 1.0, 5.0), scene);
-        light0.diffuse = new Color3(1.0, 1.0, 1.0);
-        light0.specular = new Color3(1.0, 1.0, 1.0);
+        light0.diffuse = new Color3(0.0, 0.0, 1.0);
+        light0.specular = new Color3(0.0, 0.0, 1.0);
         current_scene.lights.push(light0);
 
         // Create ground mesh
@@ -359,9 +359,10 @@ class Renderer {
         vertexData.applyToMesh(star, true);
 
         star.metadata = {
-            mat_color: new Color3(0.761, 0.796, 0.269),
+            // mat_color: new Color3(0.761, 0.796, 0.269),
+            mat_color: new Color3(0.5, 0.5, 0.5),
             mat_texture: white_texture,
-            mat_specular: new Color3(0.6, 0.6, 0.6),
+            mat_specular: new Color3(0.0, 0.0, 0.0),
             mat_shininess: 1,
             texture_scale: new Vector2(1.0, 1.0)
         }
@@ -406,7 +407,8 @@ class Renderer {
         scene.onBeforeRenderObservable.add(() => {
             // update models and lights here (if needed)
             // ...
-            star.addRotation(0, Math.PI/80, 0);
+            star.addRotation(0, Math.PI/160, 0);
+            // console.log(VertexData.ExtractFromMesh(star).clone().transform(star.getWorldMatrix()).normals);
             // update uniforms in shader programs
             this.updateShaderUniforms(scene_idx, materials['illum_' + this.shading_alg]);
             this.updateShaderUniforms(scene_idx, materials['ground_' + this.shading_alg]);
