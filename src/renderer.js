@@ -219,8 +219,8 @@ class Renderer {
 
         // Create point light sources
         let light0 = new PointLight('light0', new Vector3(1.0, 1.0, 5.0), scene);
-        light0.diffuse = new Color3(0.0, 0.0, 1.0);
-        light0.specular = new Color3(0.0, 0.0, 1.0);
+        light0.diffuse = new Color3(252/256, 223/256, 3/256);
+        light0.specular = new Color3(252/256, 223/256, 3/256);
         current_scene.lights.push(light0);
 
         // Create ground mesh
@@ -283,7 +283,6 @@ class Renderer {
         // generate ten points, 5 along the outer radius, 5 along the inner radius
         var positions = [];
         var idx_cnt = 0;
-        var count = 0;
         var indices = [];
         var out_rad = 5.0; // outer radius
         var in_rad = 2.5;  // inner radius
@@ -359,11 +358,10 @@ class Renderer {
         vertexData.applyToMesh(star, true);
 
         star.metadata = {
-            // mat_color: new Color3(0.761, 0.796, 0.269),
-            mat_color: new Color3(0.5, 0.5, 0.5),
+            mat_color: new Color3(250/256, 230/256, 82/256),
             mat_texture: white_texture,
-            mat_specular: new Color3(0.0, 0.0, 0.0),
-            mat_shininess: 1,
+            mat_specular: new Color3(250/256, 230/256, 82/256),
+            mat_shininess: 20,
             texture_scale: new Vector2(1.0, 1.0)
         }
         star.material = materials['illum_' + this.shading_alg];
@@ -408,6 +406,9 @@ class Renderer {
             // update models and lights here (if needed)
             // ...
             star.addRotation(0, Math.PI/160, 0);
+            mars.addRotation(0, Math.PI/300, 0);
+            jupiter.addRotation(0, Math.PI/400, 0);
+            neptune.addRotation(0, Math.PI/500, 0);
             // console.log(VertexData.ExtractFromMesh(star).clone().transform(star.getWorldMatrix()).normals);
             // update uniforms in shader programs
             this.updateShaderUniforms(scene_idx, materials['illum_' + this.shading_alg]);

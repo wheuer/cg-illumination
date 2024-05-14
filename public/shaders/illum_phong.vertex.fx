@@ -23,7 +23,7 @@ void main() {
     vec4 worldPosition = world * vec4(position, 1.0);
 
     // Pass vertex position onto the fragment shader
-    model_position = worldPosition.xyz;
+    model_position = worldPosition.xyz / worldPosition.w;
 
     // Pass vertex normal onto the fragment shader
     model_normal = normalize(inverse(transpose(mat3(world))) * normal);

@@ -28,7 +28,7 @@ out vec3 specular_illum;
 
 void main() {
     // Transform model position into world space
-    vec4 worldPositionFull = world * vec4(position, 1.0);
+    vec4 worldPositionFull = projection * view * world * vec4(position, 1.0);
     vec3 worldPosition = worldPositionFull.xyz / worldPositionFull.w; // w probably = 1, but doesn't hurt
     vec3 worldNormal = normalize(inverse(transpose(mat3(world))) * normal);
 
@@ -53,5 +53,5 @@ void main() {
     model_uv = uv;
 
     // Transform and project vertex from 3D world-space to 2D screen-space
-    gl_Position = projection * view * worldPositionFull;
+    gl_Position = worldPositionFull;
 }
