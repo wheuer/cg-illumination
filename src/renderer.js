@@ -405,7 +405,6 @@ class Renderer {
         scene.onBeforeRenderObservable.add(() => {
             // update models and lights here (if needed)
             // ...
-            star.addRotation(0, Math.PI/160, 0);
             mars.addRotation(0, Math.PI/300, 0);
             jupiter.addRotation(0, Math.PI/400, 0);
             neptune.addRotation(0, Math.PI/500, 0);
